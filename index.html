@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Hex Grid Mind Map</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+  <style>
+    body { margin: 0; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+<script>
+let hexRadius = 60;
+let hexData = [];
+let draggingHex = null;
+let centerX, centerY;
+
+let defaultIdeas = [
+  { label: "Core Idea", col: 0, row: 0, color: "#FFC107" },
+  { label: "Design", col: -1, row: 0, color: "#03A9F4" },
+  { label: "Research", col: 1, row: 0, color: "#8BC34A" },
+  { label: "Materials", col: 0, row: -1, color: "#FF5722" },
+  { label: "Risks", col: 0, row: 1, color: "#E91E63" },
+  { label: "Partners", col: -1, row: 1, color: "#9C27B0" },
+  { label: "Timeline", col: 1, row: 1, color: "#607D8B" }
+];
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  centerX = width / 2;
+  centerY = height / 2;
+  textAlign(CENTER, CENTER);
+  textSize(14);
+  hexData = defaultIdeas.map(h => {
+    let x = centerX + h.col * 1.5 * hexRadius;
+    let y = centerY + h.row * sqrt(3) * hexRadius + (h.col % 2 !== 0 ? sqrt(3)/2 * hexRadius : 0);
+    return { ...h, x, y };
+  });
+}
+
+function draw() {
+  background(255);
+  for (let h of hexData) {
+    drawHex(h);
+  }
+}
+
+function drawHex(h) {
+  fill(h.color);
+  stroke(0);
+  beginShape();
+  for (let i = 0; i < 6; i++) {
+    let angle = PI / 3 * i;
+    vertex(h.x + cos(angle) * hexRadius, h.y + sin(angle) * hexRadius);
+  }
+  endShape(CLOSE);
+  fill(0);
+  noStroke();
+  text(h.label, h.x, h.y);
+}
+
+function mousePressed() {
+  for (let h of hexData) {
+    if (dist(mouseX, mouseY, h.x, h.y) < hexRadius) {
+      draggingHex = h;
+      break;
+    }
+  }
+}
+
+function mouseDragged() {
+  if (draggingHex) {
+    draggingHex.x = mouseX;
+    draggingHex.y = mouseY;
+    redraw();
+  }
+}
+
+function mouseReleased() {
+  draggingHex = null;
+}
+</script>
+</body>
+</html>
