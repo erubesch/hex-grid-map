@@ -70,7 +70,8 @@ function drawHex(h) {
   endShape(CLOSE);
   fill(0);
   noStroke();
-  text(h.label, h.x, h.y);
+  text(h.label, h.x, h.y, hexRadius * 1.5, hexRadius * 2);
+
 }
 
 function mousePressed() {
