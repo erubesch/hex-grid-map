@@ -42,7 +42,13 @@ function setup() {
       let y = centerY + h.row * sqrt(3) * hexRadius + (h.col % 2 !== 0 ? sqrt(3)/2 * hexRadius : 0);
       return { ...h, x, y };
     });
+    console.log("Hexes generated:", hexData);
     redraw();
+  } else {
+    console.warn("No data loaded into sheet.");
+  }
+    
+    
 }
 
 function draw() {
