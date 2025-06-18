@@ -23,12 +23,8 @@ let url = "https://script.google.com/macros/s/AKfycbwwzZwI5hPf0tqUqvJb4VN1InAQKe
 function preload() {
   loadJSON(url, res => {
     console.log("Loaded JSON:", res);
-    hexData = res.items.map(h => {
-      let x = centerX + h.col * 1.5 * hexRadius;
-      let y = centerY + h.row * sqrt(3) * hexRadius + (h.col % 2 !== 0 ? sqrt(3)/2 * hexRadius : 0);
-      return { ...h, x, y };
-    });
-    redraw();
+   rawData = res.items;
+ 
   });
 }
 
@@ -39,6 +35,13 @@ function setup() {
   textAlign(CENTER, CENTER);
   textSize(14);
   noLoop();
+
+  hexData = res.items.map(h => {
+      let x = centerX + h.col * 1.5 * hexRadius;
+      let y = centerY + h.row * sqrt(3) * hexRadius + (h.col % 2 !== 0 ? sqrt(3)/2 * hexRadius : 0);
+      return { ...h, x, y };
+    });
+    redraw();
 }
 
 function draw() {
