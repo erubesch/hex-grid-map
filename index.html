@@ -11,10 +11,10 @@
 </head>
 <body>
 <script>
-  console.log("Script loaded");
-  let hexRadius = 60;
-  let hexData = [];let draggingHex = null;
-  let centerX, centerY;
+let hexRadius = 60;
+let hexData = [];
+let draggingHex = null;
+let centerX, centerY;
 
 let url = "https://script.google.com/macros/s/AKfycby94JzUkhIgkKBlb98jWhStU8yh8fZeoGwQPgX3vrUeW54iwWaoqxuoYsDT6yRKkWjQ/exec";
 
@@ -61,4 +61,48 @@ function drawHex(h) {
 
 function mousePressed() {
   for (let h of hexData) {
-    i
+    if (dist(mouseX, mouseY, h.x, h.y) < hexRadius) {
+      draggingHex = h;
+      break;
+    }
+  }
+}
+
+function mouseDragged() {
+  if (draggingHex) {
+    draggingHex.x = mouseX;
+    draggingHex.y = mouseY;
+    redraw();
+  }
+}
+
+function mouseReleased() {
+  if (draggingHex) {
+    let newCol = round((draggingHex.x - centerX) / (1.5 * hexRadius));
+    let yOffset = (newCol % 2 !== 0) ? sqrt(3)/2 * hexRadius : 0;
+    let newRow = round((draggingHex.y - centerY - yOffset) / (sqrt(3) * hexRadius));
+
+    draggingHex.col = newCol;
+    draggingHex.row = newRow;
+
+    draggingHex.x = centerX + newCol * 1.5 * hexRadius;
+    draggingHex.y = centerY + newRow * sqrt(3) * hexRadius + (newCol % 2 !== 0 ? sqrt(3)/2 * hexRadius : 0);
+
+    // Send updated position back to Google Sheet
+    fetch(url, {
+      method: "POST",
+      body: JSON.stringify({
+        label: draggingHex.label,
+        col: draggingHex.col,
+        row: draggingHex.row
+      }),
+      headers: { "Content-Type": "application/json" }
+    }).then(res => res.text()).then(console.log);
+
+    draggingHex = null;
+    redraw();
+  }
+}
+</script>
+</body>
+</html>
